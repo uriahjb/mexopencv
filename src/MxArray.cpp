@@ -308,6 +308,12 @@ double MxArray::toDouble() const {
     return at<double>(0);
 }
 
+float MxArray::toFloat() const {
+    if (numel() != 1)
+        mexErrMsgIdAndTxt("mexopencv:error", "MxArray is not a scalar");
+    return at<float>(0);
+}
+
 bool MxArray::toBool() const {
     if (numel() != 1)
         mexErrMsgIdAndTxt("mexopencv:error", "MxArray is not a scalar");
