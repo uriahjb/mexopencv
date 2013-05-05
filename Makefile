@@ -14,7 +14,7 @@ MEXDIR	    := $(SRCDIR)/$(TARGETDIR)
 SRCS        := $(wildcard $(MEXDIR)/*.cpp) $(wildcard $(MEXDIR)/private/*.cpp)
 TARGETS     := $(subst $(MEXDIR), $(TARGETDIR), $(SRCS:.cpp=.$(MEXEXT)))
 C_FLAGS     := -cxx -largeArrayDims -I$(INCLUDEDIR) $(shell pkg-config --cflags opencv)
-LD_FLAGS    := -L$(LIBDIR) $(shell pkg-config --libs opencv)
+LD_FLAGS    := -L$(LIBDIR) $(shell pkg-config --libs opencv) -lrt 
 
 VPATH       = $(TARGETDIR):$(SRCDIR):$(MEXDIR):$(TARGETDIR)/private:$(SRCDIR)/private
 

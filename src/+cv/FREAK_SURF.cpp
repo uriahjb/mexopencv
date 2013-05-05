@@ -1,11 +1,11 @@
 /**
- * @file FREAK_FAST.cpp
- * @brief mex interface for FREAK using FAST keypoint detectors
+ * @file FREAK_SURF.cpp
+ * @brief mex interface for FREAK using SURF keypoint detectors
  * @author Uriah Baalke
  * @date 2013
  */
 #include "mexopencv.hpp"
-
+#include <opencv2/nonfree/nonfree.hpp>
 
 //#define TIMING 
 
@@ -18,14 +18,12 @@
 using namespace std;
 using namespace cv;
 
-/*
 namespace {
 
 /// Initialization flag
 bool initialized = false;
 
 }
-*/
 
 
 /**
@@ -42,12 +40,10 @@ void mexFunction( int nlhs, mxArray *plhs[],
     if (nrhs<1 || ((nrhs%2)!=1) || nlhs>2)
         mexErrMsgIdAndTxt("mexopencv:error","Wrong number of arguments");
 
-    /*
     if (!initialized) {
         initModule_nonfree();
         initialized = true;
     }
-    */
 
     // Argument vector
     vector<MxArray> rhs(prhs,prhs+nrhs);
@@ -60,9 +56,15 @@ void mexFunction( int nlhs, mxArray *plhs[],
 
     // Option processing
 
+
+    // SURF options 
+    int minHessian  = 1000;
+
+    /*
     // FAST options
     int threshold = 10;
     bool nonmaxSuppression = true;
+    */
 
     // FREAK options
     bool orientationNormalized = true;
@@ -81,10 +83,8 @@ void mexFunction( int nlhs, mxArray *plhs[],
 	    patternScale = rhs[i+1].toFloat();
         else if (key=="NOctaves")
             nOctaves = rhs[i+1].toInt();
-	else if (key=="Threshold")
-	    threshold = rhs[i+1].toInt();
-        else if (key=="NonMaxSuppression")
-            nonmaxSuppression = rhs[i+1].toBool();
+        else if (key=="minHessian")
+            minHessian = rhs[i+1].toInt();
         else
             mexErrMsgIdAndTxt("mexopencv:error","Unrecognized option");
     }
@@ -114,7 +114,9 @@ void mexFunction( int nlhs, mxArray *plhs[],
     #endif 
     // Calculate keypoints
     vector<KeyPoint> keypoints;
-    FAST( image, keypoints, threshold, nonmaxSuppression );
+    //FAST( image, keypoints, threshold, nonmaxSuppression );
+    SurfFeatureDetector detector( minHessian );
+    detector.detect( image, keypoints );
 
     #ifdef TIMING
     clock_gettime( CLOCK_REALTIME, &toc );
